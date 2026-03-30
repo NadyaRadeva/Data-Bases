@@ -55,3 +55,80 @@ HAVING COUNT(*) >= ALL (
     WHERE si2.STARNAME = si.STARNAME
     GROUP BY m2.STUDIONAME
 );
+
+-- Exercise 8
+SELECT m.TITLE, m.YEAR, COUNT(si.STARNAME) AS STARNAME
+FROM MOVIE AS m
+LEFT JOIN STARSIN AS si ON m.TITLE=si.MOVIETITLE
+GROUP BY m.TITLE, m.YEAR
+HAVING COUNT(si.STARNAME) > 2;
+
+
+USE ships;
+
+-- Exercise 1
+SELECT DISTINCT sh.NAME AS ShipNames
+FROM SHIPS AS sh
+LEFT JOIN OUTCOMES AS o ON sh.NAME=o.SHIP
+WHERE sh.NAME LIKE 'C%' OR sh.NAME LIKE 'K%'
+GROUP BY sh.NAME
+HAVING COUNT(o.BATTLE) >= 1;
+
+-- Exercise 2
+SELECT sh.NAME, cl.COUNTRY
+FROM SHIPS sh
+LEFT JOIN CLASSES cl ON sh.CLASS = cl.CLASS
+LEFT JOIN OUTCOMES o ON sh.NAME = o.SHIP
+GROUP BY sh.NAME, cl.COUNTRY
+HAVING COUNT(CASE 
+             WHEN o.RESULT = 'sunk' 
+             THEN 1 END) = 0;
+
+-- Exercise 3
+SELECT cl.COUNTRY, COUNT(CASE 
+                         WHEN o.RESULT = 'sunk' THEN 1 
+                         END) AS NumSunkShips
+FROM CLASSES cl
+LEFT JOIN SHIPS sh ON cl.CLASS = sh.CLASS
+LEFT JOIN OUTCOMES o ON sh.NAME = o.SHIP
+GROUP BY cl.COUNTRY;
+
+-- Exercise 4
+SELECT b.NAME, COUNT(o.SHIP) AS NumShips
+FROM BATTLES b
+LEFT JOIN OUTCOMES o ON b.NAME = o.BATTLE
+GROUP BY b.NAME
+HAVING COUNT(o.SHIP) >
+       (
+           SELECT COUNT(o1.SHIP)
+           FROM BATTLES b1
+           LEFT JOIN OUTCOMES o1 ON b1.NAME = o1.BATTLE
+           WHERE b1.NAME = 'Guadalcanal'
+       );
+
+-- Exercise 5
+SELECT b.NAME
+FROM BATTLES AS b
+LEFT JOIN OUTCOMES AS o ON b.NAME=o.BATTLE
+LEFT JOIN SHIPS AS sh ON sh.NAME=o.SHIP
+LEFT JOIN CLASSES AS cl ON cl.CLASS=sh.CLASS
+GROUP BY b.NAME
+HAVING COUNT(DISTINCT cl.COUNTRY) > (SELECT COUNT(DISTINCT cl1.COUNTRY)
+                            FROM BATTLES AS b1
+                            LEFT JOIN OUTCOMES AS o1 ON b1.NAME=o1.BATTLE
+                            LEFT JOIN SHIPS AS sh1 ON sh1.NAME=o1.SHIP
+                            LEFT JOIN CLASSES AS cl1 ON cl1.CLASS=sh1.CLASS
+                            WHERE b1.NAME='Surigao Strait');
+
+-- Exercise 6
+SELECT sh.NAME
+FROM SHIPS sh
+LEFT JOIN CLASSES cl ON sh.CLASS = cl.CLASS
+WHERE cl.DISPLACEMENT = (
+        SELECT MIN(DISPLACEMENT)
+        FROM CLASSES
+      )
+  AND cl.BORE = (
+        SELECT MAX(BORE)
+        FROM CLASSES
+      );
