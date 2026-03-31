@@ -132,3 +132,49 @@ WHERE cl.DISPLACEMENT = (
         SELECT MAX(BORE)
         FROM CLASSES
       );
+
+
+
+
+
+USE pc;
+
+-- Exercise 1
+SELECT l.model AS Model
+FROM laptop AS l
+LEFT JOIN product AS pr  ON l.model=pr.model
+LEFT JOIN laptop AS l1 ON l.model=l1.model
+WHERE l.screen=11 AND l1.screen=15
+GROUP BY l.model;
+
+-- Exercise 2
+SELECT DISTINCT pc.model
+FROM pc AS pc
+LEFT JOIN product AS pr ON pc.model=pr.model
+LEFT JOIN laptop AS l ON l.model=pr.model
+WHERE pc.price < (SELECT MIN(l1.price) 
+				  FROM laptop AS l1 
+				  LEFT JOIN product AS pr1 ON l1.model=pr1.model
+				  LEFT JOIN pc AS pc1 ON pr1.model=pc1.model
+				  WHERE pr.maker=pr1.maker);
+
+-- Exercise 3
+SELECT pc.model AS Model, AVG(pc.price) AS AveragePrice
+FROM pc
+LEFT JOIN product pr ON pc.model = pr.model
+GROUP BY pc.model, pr.maker
+HAVING AVG(pc.price) < (
+    SELECT MIN(l.price)
+    FROM laptop l
+    LEFT JOIN product pr1 ON l.model = pr1.model
+    WHERE pr1.maker = pr.maker
+);
+
+-- Exercise 4
+SELECT pc.code,
+       pr.maker,
+       (SELECT COUNT(DISTINCT pc1.price)
+        FROM pc pc1
+        WHERE pc1.price <= pc.price) AS price_rank
+FROM pc pc
+JOIN product pr ON pc.model = pr.model;
