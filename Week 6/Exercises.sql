@@ -133,8 +133,27 @@ WHERE cl.DISPLACEMENT = (
         FROM CLASSES
       );
 
-
-
+-- Exercise 7
+SELECT COUNT(DISTINCT sh.NAME)
+FROM SHIPS AS sh
+WHERE EXISTS (
+    SELECT 1
+    FROM OUTCOMES AS o1
+    JOIN BATTLES AS b1 ON b1.NAME = o1.BATTLE
+    WHERE o1.SHIP = sh.NAME AND o1.RESULT = 'damaged'
+)
+AND EXISTS (
+    SELECT 1
+    FROM OUTCOMES AS o2
+    LEFT JOIN BATTLES AS b2 ON b2.NAME = o2.BATTLE
+    WHERE o2.SHIP = sh.NAME
+      AND b2.DATE > (
+          SELECT MAX(b1.DATE)
+          FROM OUTCOMES o1
+          LEFT JOIN BATTLES b1 ON b1.NAME = o1.BATTLE
+          WHERE o1.SHIP = sh.NAME AND o1.RESULT = 'damaged'
+      )
+);
 
 
 USE pc;
