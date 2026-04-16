@@ -1,0 +1,97 @@
+USE movies3;
+
+-- Exercuse 1
+INSERT INTO MOVIESTAR(NAME, BIRTHDATE)
+VALUES ('Nicole Kidman', '1967-06-20');
+
+SELECT * FROM MOVIESTAR;
+
+-- Exercise 2
+DELETE FROM MOVIEEXEC
+WHERE NETWORTH<30000000 AND CERT# NOT IN (SELECT PRODUCERC# FROM MOVIE);
+
+SELECT * FROM MOVIEEXEC;
+
+-- Exercise 3
+SELECT * FROM MOVIESTAR;
+
+DELETE FROM MOVIESTAR
+WHERE ADDRESS IS NULL;
+
+USE pc3;
+
+-- Exercise 4
+BEGIN TRANSACTION;
+
+	INSERT INTO PRODUCT(model, maker, type)
+	VALUES('1100','C','PC');
+
+	INSERT INTO pc(code, model, speed, ram, hd, cd, price)
+	VALUES(12, '1100', 2400, 2048, 500, '52x', 299);
+
+ROLLBACK TRANSACTION;
+
+-- Exercise 5
+DELETE FROM pc 
+WHERE model='1100' AND model  NOT IN (SELECT model FROM product);
+
+SELECT * FROM pc;
+SELECT * FROM product;
+
+-- Exercise 6
+BEGIN TRANSACTION;
+
+DELETE FROM laptop
+WHERE model IN (SELECT pr.model FROM product AS pr WHERE pr.model NOT IN (SELECT pri.model FROM printer AS pri));
+
+ROLLBACK TRANSACTION;
+
+-- Exercise 7
+UPDATE product
+SET maker='A'
+WHERE maker='B';
+
+SELECT * FROM product;
+SELECT * FROM printer;
+SELECT * FROM pc;
+SELECT * FROM laptop;
+
+-- Exercise 8
+UPDATE pc
+SET price = price/2;
+
+UPDATE pc
+SET hd=hd+20;
+
+-- Exercise 9
+UPDATE laptop
+SET screen=screen+1
+WHERE model IN (SELECT model FROM product WHERE maker='B');
+
+
+USE ships3;
+
+-- Exercise 10
+SELECT * FROM CLASSES;
+SELECT * FROM SHIPS;
+
+BEGIN TRANSACTION;
+
+INSERT INTO CLASSES(CLASS, BORE, DISPLACEMENT)
+VALUES('Nelson-Nelson', 16, 34000), ('Rodney', 16, 34000);
+
+INSERT INTO SHIPS(CLASS, LAUNCHED)
+VALUES('Nelson-Nelson', 1927), ('Rodney', 1927);
+
+ROLLBACK TRANSACTION;
+
+-- Exercise 11
+DELETE FROM SHIPS
+WHERE NAME IN (SELECT SHIP FROM OUTCOMES WHERE RESULT = 'sunk');
+
+-- Exercise 12
+UPDATE CLASSES
+SET BORE=BORE*2.5;
+
+UPDATE CLASSES
+SET DISPLACEMENT=DISPLACEMENT/1.1;
