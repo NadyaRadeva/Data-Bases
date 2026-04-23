@@ -68,3 +68,11 @@ CREATE TABLE si(
 					ON DELETE NO ACTION
 					ON UPDATE NO ACTION
 				)
+
+--NAME,STARTDATE, ENDDATE - constraints, data - homework - za vseki proekt k[ dvoj programisti e rabotila sumarno naj-dylgo vreme zaedno
+CREATE TABLE Track(
+					USERNAME VARCHAR(8),
+					PROJECT INT PRIMARY KEY,
+					STARTDATE DATE,
+					ENDDATE DATE,
+					CONSTRAINT )
